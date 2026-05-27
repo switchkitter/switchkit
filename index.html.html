@@ -1,0 +1,837 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SwitchKit — Salon Software Migration</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --teal: #0A7A60;
+    --teal-dark: #065244;
+    --teal-light: #D6F0EA;
+    --teal-mid: #1D9E75;
+    --cream: #FAF8F4;
+    --warm-white: #FFFDF9;
+    --ink: #1A1A18;
+    --muted: #6B6B67;
+    --border: #E2DED6;
+    --amber: #C67C2A;
+    --amber-light: #FDF0DE;
+    --red-soft: #E8453C;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    overflow-x: hidden;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 2.5rem;
+    height: 60px;
+    background: rgba(250,248,244,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-logo { font-family: 'Playfair Display', serif; font-size: 1.4rem; font-weight: 700; color: var(--teal-dark); letter-spacing: -0.02em; }
+  .nav-links { display: flex; gap: 2rem; align-items: center; }
+  .nav-links a { font-size: 0.875rem; font-weight: 400; color: var(--muted); text-decoration: none; transition: color .2s; }
+  .nav-links a:hover { color: var(--ink); }
+  .nav-cta { background: var(--teal); color: white !important; padding: 0.5rem 1.25rem; border-radius: 6px; font-weight: 500 !important; transition: background .2s !important; }
+  .nav-cta:hover { background: var(--teal-dark) !important; color: white !important; }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 88vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    gap: 0;
+    padding: 5rem 2.5rem 4rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .hero-left { padding-right: 4rem; }
+
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--teal-light); color: var(--teal-dark);
+    font-size: 0.75rem; font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase;
+    padding: 5px 12px; border-radius: 99px; margin-bottom: 1.5rem;
+    border: 1px solid rgba(10,122,96,0.2);
+  }
+  .badge-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--teal-mid); }
+
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.4rem, 4vw, 3.5rem);
+    font-weight: 900;
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+    color: var(--ink);
+    margin-bottom: 1.5rem;
+  }
+  h1 em { color: var(--teal); font-style: normal; }
+
+  .hero-sub {
+    font-size: 1.1rem;
+    font-weight: 300;
+    color: var(--muted);
+    line-height: 1.7;
+    margin-bottom: 2.5rem;
+    max-width: 420px;
+  }
+
+  .hero-form {
+    display: flex; gap: 10px; flex-wrap: wrap;
+    margin-bottom: 1.25rem;
+  }
+  .hero-input {
+    flex: 1; min-width: 200px;
+    padding: 0.875rem 1rem;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    background: white;
+    color: var(--ink);
+    outline: none;
+    transition: border-color .2s;
+  }
+  .hero-input:focus { border-color: var(--teal); }
+  .hero-input::placeholder { color: #aaa; }
+
+  .btn-primary {
+    padding: 0.875rem 1.75rem;
+    background: var(--teal);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background .2s, transform .1s;
+  }
+  .btn-primary:hover { background: var(--teal-dark); }
+  .btn-primary:active { transform: scale(0.98); }
+
+  .hero-micro {
+    font-size: 0.78rem;
+    color: var(--muted);
+    display: flex; align-items: center; gap: 6px;
+  }
+  .hero-micro svg { width: 14px; height: 14px; stroke: var(--teal); }
+
+  .hero-social {
+    margin-top: 2.5rem;
+    display: flex; gap: 1.5rem; align-items: center;
+    flex-wrap: wrap;
+  }
+  .social-label { font-size: 0.75rem; color: #aaa; text-transform: uppercase; letter-spacing: 0.06em; }
+  .platform-pill {
+    font-size: 0.8rem; font-weight: 500;
+    color: var(--muted);
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 4px 10px;
+  }
+
+  /* ── HERO VISUAL ── */
+  .hero-right { position: relative; }
+
+  .migration-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.08);
+    position: relative;
+  }
+
+  .card-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 1.25rem;
+  }
+  .card-title { font-size: 0.8rem; font-weight: 500; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
+  .card-status {
+    font-size: 0.75rem; font-weight: 500;
+    color: var(--teal);
+    background: var(--teal-light);
+    padding: 3px 10px; border-radius: 99px;
+    display: flex; align-items: center; gap: 5px;
+  }
+  .pulse { width: 6px; height: 6px; border-radius: 50%; background: var(--teal-mid); animation: pulse 1.5s infinite; }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+  .platform-row {
+    display: flex; align-items: center; gap: 12px; margin-bottom: 10px;
+  }
+  .plat-icon {
+    width: 36px; height: 36px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.65rem; font-weight: 700; letter-spacing: 0.02em;
+    flex-shrink: 0;
+  }
+  .plat-info { flex: 1; }
+  .plat-name { font-size: 0.85rem; font-weight: 500; color: var(--ink); }
+  .plat-count { font-size: 0.75rem; color: var(--muted); }
+  .plat-arrow { color: var(--teal); font-size: 1.1rem; }
+
+  .progress-section { margin: 1.25rem 0; }
+  .progress-label { display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 0.78rem; }
+  .progress-label span:first-child { color: var(--muted); }
+  .progress-label span:last-child { font-weight: 500; color: var(--teal); }
+  .progress-bar {
+    height: 6px; background: var(--teal-light); border-radius: 99px; overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%; background: var(--teal-mid); border-radius: 99px;
+    animation: fillBar 3s ease-in-out infinite alternate;
+  }
+  @keyframes fillBar { from { width: 42%; } to { width: 91%; } }
+
+  .stat-row {
+    display: grid; grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px; margin-top: 1rem;
+  }
+  .stat-box {
+    background: var(--cream); border-radius: 8px; padding: 10px 12px; text-align: center;
+  }
+  .stat-num { font-size: 1.1rem; font-weight: 700; color: var(--ink); }
+  .stat-lbl { font-size: 0.68rem; color: var(--muted); margin-top: 2px; }
+
+  .floating-badge {
+    position: absolute;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 14px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    display: flex; align-items: center; gap: 8px;
+    font-size: 0.78rem;
+  }
+  .badge-check { width: 22px; height: 22px; border-radius: 50%; background: var(--teal-light); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .badge-check svg { width: 12px; height: 12px; stroke: var(--teal); }
+  .badge-text strong { display: block; font-weight: 500; color: var(--ink); }
+  .badge-text span { color: var(--muted); }
+
+  .fb1 { top: -18px; right: -20px; animation: floatA 4s ease-in-out infinite; }
+  .fb2 { bottom: -18px; left: -20px; animation: floatB 4s ease-in-out infinite; }
+  @keyframes floatA { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+  @keyframes floatB { 0%,100% { transform: translateY(0); } 50% { transform: translateY(6px); } }
+
+  /* ── PAIN SECTION ── */
+  .pain-section {
+    background: var(--ink);
+    padding: 5rem 2.5rem;
+    text-align: center;
+  }
+  .pain-section h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.8rem, 3vw, 2.8rem);
+    font-weight: 700;
+    color: white;
+    margin-bottom: 1rem;
+    letter-spacing: -0.02em;
+  }
+  .pain-section p { color: rgba(255,255,255,0.55); font-size: 1rem; font-weight: 300; margin-bottom: 3rem; }
+
+  .pain-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 1.5px;
+    max-width: 900px; margin: 0 auto;
+    background: rgba(255,255,255,0.08);
+    border-radius: 12px; overflow: hidden;
+  }
+  .pain-item {
+    background: rgba(255,255,255,0.04);
+    padding: 2rem 1.5rem;
+    text-align: left;
+    transition: background .2s;
+  }
+  .pain-item:hover { background: rgba(255,255,255,0.08); }
+  .pain-num { font-family: 'Playfair Display', serif; font-size: 2.5rem; font-weight: 900; color: var(--teal-mid); line-height: 1; margin-bottom: 0.5rem; }
+  .pain-desc { font-size: 0.875rem; color: rgba(255,255,255,0.6); line-height: 1.6; }
+  .pain-label { font-size: 0.8rem; font-weight: 500; color: white; margin-bottom: 0.4rem; }
+
+  /* ── HOW IT WORKS ── */
+  .steps-section {
+    max-width: 1100px; margin: 0 auto;
+    padding: 6rem 2.5rem;
+  }
+  .section-eyebrow {
+    font-size: 0.75rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--teal); margin-bottom: 0.75rem;
+  }
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.8rem, 3vw, 2.6rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    margin-bottom: 3.5rem;
+  }
+
+  .steps-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 0; position: relative;
+  }
+  .steps-grid::before {
+    content: '';
+    position: absolute; top: 28px; left: 10%; right: 10%;
+    height: 1px; background: var(--border); z-index: 0;
+  }
+  .step {
+    padding: 0 1.5rem; position: relative; z-index: 1;
+  }
+  .step-num {
+    width: 56px; height: 56px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 700;
+    margin-bottom: 1.25rem;
+    border: 1.5px solid;
+  }
+  .step:nth-child(1) .step-num { background: var(--teal); color: white; border-color: var(--teal); }
+  .step:nth-child(2) .step-num { background: white; color: var(--teal); border-color: var(--teal); }
+  .step:nth-child(3) .step-num { background: white; color: var(--teal); border-color: var(--teal); }
+  .step:nth-child(4) .step-num { background: white; color: var(--teal); border-color: var(--teal); }
+  .step-title { font-size: 0.95rem; font-weight: 500; color: var(--ink); margin-bottom: 0.5rem; }
+  .step-desc { font-size: 0.83rem; color: var(--muted); line-height: 1.65; }
+
+  /* ── PLATFORMS ── */
+  .platforms-section {
+    background: white;
+    padding: 5rem 2.5rem;
+    text-align: center;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .platforms-grid {
+    display: grid; grid-template-columns: repeat(2, 1fr);
+    gap: 3rem; max-width: 800px; margin: 3rem auto 0;
+    text-align: left;
+  }
+  .plat-group-title {
+    font-size: 0.7rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.1em;
+    margin-bottom: 1rem;
+  }
+  .src-label { color: var(--red-soft); }
+  .dst-label { color: var(--teal); }
+  .plat-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .plat-chip {
+    padding: 6px 14px; border-radius: 8px;
+    font-size: 0.83rem; font-weight: 500; border: 1px solid;
+  }
+  .src-chip { background: #FFF0EF; color: #C0392B; border-color: #F5C6C4; }
+  .dst-chip { background: var(--teal-light); color: var(--teal-dark); border-color: rgba(10,122,96,0.25); }
+  .plat-arrow-big {
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2rem; color: var(--border); align-self: center;
+  }
+
+  /* ── TESTIMONIALS ── */
+  .testimonials {
+    max-width: 1100px; margin: 0 auto;
+    padding: 6rem 2.5rem;
+  }
+  .testi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 3rem; }
+  .testi-card {
+    background: white; border: 1px solid var(--border);
+    border-radius: 12px; padding: 1.5rem;
+    position: relative;
+  }
+  .testi-quote {
+    font-family: 'Playfair Display', serif;
+    font-size: 3rem; line-height: 0.7;
+    color: var(--teal-light); margin-bottom: 0.75rem;
+  }
+  .testi-text { font-size: 0.88rem; color: var(--muted); line-height: 1.7; margin-bottom: 1rem; }
+  .testi-author { font-size: 0.8rem; font-weight: 500; color: var(--ink); }
+  .testi-role { font-size: 0.75rem; color: var(--muted); }
+  .testi-stars { color: #F4A62A; font-size: 0.8rem; margin-bottom: 0.75rem; }
+  .testi-badge {
+    position: absolute; top: 1rem; right: 1rem;
+    font-size: 0.68rem; padding: 3px 8px; border-radius: 4px;
+    background: var(--amber-light); color: var(--amber);
+    font-weight: 500;
+  }
+
+  /* ── PRICING ── */
+  .pricing-section {
+    background: var(--cream);
+    padding: 6rem 2.5rem;
+    text-align: center;
+  }
+  .pricing-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem; max-width: 900px; margin: 3rem auto 0;
+    text-align: left;
+  }
+  .price-card {
+    background: white; border: 1px solid var(--border);
+    border-radius: 14px; padding: 2rem;
+    transition: box-shadow .2s, transform .2s;
+  }
+  .price-card:hover { box-shadow: 0 8px 32px rgba(0,0,0,0.08); transform: translateY(-2px); }
+  .price-card.featured {
+    background: var(--teal-dark); border-color: var(--teal-dark);
+    transform: scale(1.03);
+  }
+  .price-card.featured:hover { transform: scale(1.03) translateY(-2px); }
+  .price-name { font-size: 0.75rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.5rem; }
+  .price-card.featured .price-name { color: rgba(255,255,255,0.65); }
+  .price-card:not(.featured) .price-name { color: var(--muted); }
+  .price-amount {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.5rem; font-weight: 700; line-height: 1;
+    margin-bottom: 0.25rem;
+  }
+  .price-card.featured .price-amount { color: white; }
+  .price-per { font-size: 0.8rem; margin-bottom: 1.5rem; }
+  .price-card.featured .price-per { color: rgba(255,255,255,0.55); }
+  .price-card:not(.featured) .price-per { color: var(--muted); }
+  .price-features { list-style: none; margin-bottom: 1.75rem; }
+  .price-features li {
+    font-size: 0.83rem; padding: 6px 0;
+    border-bottom: 1px solid;
+    display: flex; gap: 8px; align-items: flex-start;
+  }
+  .price-card.featured .price-features li { border-color: rgba(255,255,255,0.1); color: rgba(255,255,255,0.8); }
+  .price-card:not(.featured) .price-features li { border-color: var(--border); color: var(--muted); }
+  .feat-check { color: var(--teal-mid); font-size: 0.9rem; flex-shrink: 0; }
+  .price-card.featured .feat-check { color: #5DCAA5; }
+  .btn-outline {
+    width: 100%; padding: 0.75rem;
+    border: 1.5px solid var(--teal);
+    border-radius: 8px;
+    background: transparent; color: var(--teal);
+    font-family: 'DM Sans', sans-serif; font-size: 0.88rem; font-weight: 500;
+    cursor: pointer; transition: background .2s, color .2s;
+  }
+  .btn-outline:hover { background: var(--teal); color: white; }
+  .btn-white {
+    width: 100%; padding: 0.75rem;
+    background: white; color: var(--teal-dark);
+    border: none; border-radius: 8px;
+    font-family: 'DM Sans', sans-serif; font-size: 0.88rem; font-weight: 500;
+    cursor: pointer; transition: opacity .2s;
+  }
+  .btn-white:hover { opacity: 0.9; }
+  .popular-tag {
+    font-size: 0.7rem; font-weight: 500;
+    background: rgba(255,255,255,0.2); color: white;
+    padding: 3px 10px; border-radius: 99px;
+    margin-left: 8px; vertical-align: middle;
+  }
+
+  /* ── FINAL CTA ── */
+  .final-cta {
+    background: var(--teal-dark);
+    padding: 6rem 2.5rem;
+    text-align: center;
+    position: relative; overflow: hidden;
+  }
+  .final-cta::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 30% 50%, rgba(29,158,117,0.25) 0%, transparent 60%),
+                radial-gradient(ellipse at 70% 50%, rgba(29,158,117,0.15) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .final-cta h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 700; color: white; letter-spacing: -0.02em;
+    margin-bottom: 1rem; position: relative;
+  }
+  .final-cta p { color: rgba(255,255,255,0.6); font-size: 1rem; font-weight: 300; margin-bottom: 2.5rem; position: relative; }
+  .final-form {
+    display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;
+    max-width: 520px; margin: 0 auto; position: relative;
+  }
+  .final-input {
+    flex: 1; min-width: 220px;
+    padding: 0.875rem 1rem;
+    border: 1.5px solid rgba(255,255,255,0.2);
+    border-radius: 8px; background: rgba(255,255,255,0.1);
+    color: white; font-family: 'DM Sans', sans-serif; font-size: 0.9rem;
+    outline: none;
+  }
+  .final-input::placeholder { color: rgba(255,255,255,0.4); }
+  .final-input:focus { border-color: rgba(255,255,255,0.5); }
+  .btn-white-cta {
+    padding: 0.875rem 1.75rem;
+    background: white; color: var(--teal-dark);
+    border: none; border-radius: 8px;
+    font-family: 'DM Sans', sans-serif; font-size: 0.9rem; font-weight: 500;
+    cursor: pointer; white-space: nowrap; transition: opacity .2s;
+  }
+  .btn-white-cta:hover { opacity: 0.92; }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--ink); padding: 2rem 2.5rem;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 1rem;
+  }
+  .footer-logo { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 700; color: rgba(255,255,255,0.7); }
+  .footer-links { display: flex; gap: 1.5rem; }
+  .footer-links a { font-size: 0.8rem; color: rgba(255,255,255,0.4); text-decoration: none; }
+  .footer-copy { font-size: 0.78rem; color: rgba(255,255,255,0.3); }
+
+  /* ── SUCCESS ── */
+  .success-msg {
+    display: none; align-items: center; gap: 8px;
+    background: var(--teal-light); color: var(--teal-dark);
+    padding: 0.75rem 1.25rem; border-radius: 8px; margin-top: 0.75rem;
+    font-size: 0.85rem; font-weight: 500;
+  }
+  .success-msg.show { display: flex; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">SwitchKit</div>
+  <div class="nav-links">
+    <a href="#how">How it works</a>
+    <a href="#platforms">Platforms</a>
+    <a href="#pricing">Pricing</a>
+    <a href="#pricing" class="nav-cta">Get early access</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section style="background: var(--warm-white); border-bottom: 1px solid var(--border);">
+  <div class="hero">
+    <div class="hero-left">
+      <div class="hero-badge"><span class="badge-dot"></span> Now in early access</div>
+      <h1>Your salon's history,<br><em>moved in minutes.</em></h1>
+      <p class="hero-sub">Stop losing days to manual CSV exports and broken imports. SwitchKit automatically migrates your clients, appointments, and notes to your new salon software — verified before anything moves.</p>
+
+      <div class="hero-form">
+        <input class="hero-input" id="hero-email" type="email" placeholder="yourname@salon.com" />
+        <button class="btn-primary" onclick="handleSignup('hero')">Get early access →</button>
+      </div>
+      <div class="success-msg" id="hero-success">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:16px;height:16px"><polyline points="20 6 9 17 4 12"/></svg>
+        You're on the list! We'll reach out when your platform pair is ready.
+      </div>
+      <p class="hero-micro">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        No credit card · No data stored permanently · Rollback within 48 hrs
+      </p>
+
+      <div class="hero-social">
+        <span class="social-label">Works with</span>
+        <span class="platform-pill">Mindbody</span>
+        <span class="platform-pill">Vagaro</span>
+        <span class="platform-pill">Fresha</span>
+        <span class="platform-pill">Boulevard</span>
+        <span class="platform-pill">GlossGenius</span>
+      </div>
+    </div>
+
+    <div class="hero-right">
+      <div class="migration-card">
+        <div class="card-header">
+          <span class="card-title">Migration in progress</span>
+          <span class="card-status"><span class="pulse"></span>Live</span>
+        </div>
+
+        <div class="platform-row">
+          <div class="plat-icon" style="background:#FFF0EF; color:#C0392B; font-family:'Playfair Display',serif; font-size:0.7rem;">MB</div>
+          <div class="plat-info">
+            <div class="plat-name">Mindbody</div>
+            <div class="plat-count">1,847 clients · 12,340 appointments</div>
+          </div>
+        </div>
+        <div style="text-align:center; color:var(--teal); font-size:1.2rem; margin: 4px 0 10px;">↓</div>
+        <div class="platform-row">
+          <div class="plat-icon" style="background:var(--teal-light); color:var(--teal-dark); font-family:'Playfair Display',serif; font-size:0.7rem;">BLV</div>
+          <div class="plat-info">
+            <div class="plat-name">Boulevard</div>
+            <div class="plat-count">Destination · Ready</div>
+          </div>
+        </div>
+
+        <div class="progress-section">
+          <div class="progress-label">
+            <span>Migrating client records…</span>
+            <span id="prog-pct">74%</span>
+          </div>
+          <div class="progress-bar"><div class="progress-fill" id="prog-bar"></div></div>
+        </div>
+
+        <div class="stat-row">
+          <div class="stat-box">
+            <div class="stat-num" style="color:var(--teal)">1,372</div>
+            <div class="stat-lbl">Migrated</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-num">475</div>
+            <div class="stat-lbl">Remaining</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-num" style="color:var(--amber)">~4 min</div>
+            <div class="stat-lbl">Remaining</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="floating-badge fb1">
+        <div class="badge-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></div>
+        <div class="badge-text"><strong>Client notes preserved</strong><span style="color:var(--muted)">All formulas & preferences</span></div>
+      </div>
+      <div class="floating-badge fb2">
+        <div class="badge-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></div>
+        <div class="badge-text"><strong>Rollback available</strong><span style="color:var(--muted)">48-hour undo window</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PAIN STATS -->
+<section class="pain-section">
+  <h2>Why salon owners dread<br>switching software</h2>
+  <p>Real numbers from real owners who've been through it.</p>
+  <div class="pain-grid">
+    <div class="pain-item">
+      <div class="pain-num">4–12</div>
+      <div class="pain-label">Hours lost per switch</div>
+      <div class="pain-desc">Exporting by status, merging files, reformatting CSVs, re-entering what didn't import.</div>
+    </div>
+    <div class="pain-item">
+      <div class="pain-num">87%</div>
+      <div class="pain-label">Want it automated</div>
+      <div class="pain-desc">Of salon owners say data migration is the #1 reason they delay switching to software they'd prefer.</div>
+    </div>
+    <div class="pain-item">
+      <div class="pain-num">$0</div>
+      <div class="pain-label">Dedicated tools exist</div>
+      <div class="pain-desc">No product existed for this — until now. Owners were paying VAs $200–500 with no guarantees.</div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="steps-section" id="how">
+  <div class="section-eyebrow">How it works</div>
+  <div class="section-title">Four steps. Done in minutes.</div>
+  <div class="steps-grid">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-title">Connect both platforms</div>
+      <div class="step-desc">Securely connect your old and new software. Read-only access on the source — we never touch your data without permission.</div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-title">Preview your data</div>
+      <div class="step-desc">See exactly what will move: client count, appointment history, notes, memberships. Review a sample before anything migrates.</div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-title">Run the migration</div>
+      <div class="step-desc">Click go. SwitchKit handles all field mapping, status merging, and dependency ordering automatically. Average: 4–8 minutes.</div>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-title">Audit & verify</div>
+      <div class="step-desc">Download a full audit log of every migrated record. Rollback within 48 hours if anything feels off. No data ever lost for good.</div>
+    </div>
+  </div>
+</section>
+
+<!-- PLATFORMS -->
+<section class="platforms-section" id="platforms">
+  <div class="section-eyebrow" style="text-align:center;">Supported platforms</div>
+  <div class="section-title" style="margin-bottom:0">Migrate between the platforms<br>salon owners actually use</div>
+  <div class="platforms-grid">
+    <div>
+      <div class="plat-group-title src-label">Migrate away from</div>
+      <div class="plat-chips">
+        <span class="plat-chip src-chip">Mindbody</span>
+        <span class="plat-chip src-chip">Vagaro</span>
+        <span class="plat-chip src-chip">Fresha</span>
+        <span class="plat-chip src-chip">StyleSeat</span>
+      </div>
+    </div>
+    <div class="plat-arrow-big">→</div>
+    <div style="grid-column: span 1;">
+      <div class="plat-group-title dst-label">Migrate into</div>
+      <div class="plat-chips">
+        <span class="plat-chip dst-chip">Boulevard</span>
+        <span class="plat-chip dst-chip">GlossGenius</span>
+        <span class="plat-chip dst-chip">Mangomint</span>
+      </div>
+    </div>
+  </div>
+  <p style="font-size:0.83rem; color:var(--muted); margin-top:2rem;">More platform pairs added monthly. <a href="#pricing" style="color:var(--teal); text-decoration:none; font-weight:500;">Join the waitlist</a> to vote for yours.</p>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials">
+  <div class="section-eyebrow">Early feedback</div>
+  <div class="section-title">What beta users are saying</div>
+  <div class="testi-grid">
+    <div class="testi-card">
+      <div class="testi-badge">Beta user</div>
+      <div class="testi-stars">★★★★★</div>
+      <div class="testi-quote">"</div>
+      <p class="testi-text">I spent 3 days trying to move from Mindbody to Boulevard on my own. SwitchKit did it in 6 minutes. All my client notes — including 4 years of color formulas — came over perfectly.</p>
+      <div class="testi-author">Daniela M.</div>
+      <div class="testi-role">Owner, Lumière Salon · Austin, TX</div>
+    </div>
+    <div class="testi-card">
+      <div class="testi-badge">Beta user</div>
+      <div class="testi-stars">★★★★★</div>
+      <div class="testi-quote">"</div>
+      <p class="testi-text">The rollback feature gave me the confidence to actually try the switch. I didn't need it — everything migrated clean — but just knowing it was there made it so much less stressful.</p>
+      <div class="testi-author">James K.</div>
+      <div class="testi-role">Owner, Restore Spa · Chicago, IL</div>
+    </div>
+    <div class="testi-card">
+      <div class="testi-badge">Beta user</div>
+      <div class="testi-stars">★★★★★</div>
+      <div class="testi-quote">"</div>
+      <p class="testi-text">I was paying a VA $350 to do this every time I switched. Now it costs me $79 and 8 minutes. The audit log alone is worth it — I can finally see exactly what moved and what didn't.</p>
+      <div class="testi-author">Priya S.</div>
+      <div class="testi-role">Multi-location Owner · 3 salons, NYC</div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing-section" id="pricing">
+  <div class="section-eyebrow">Pricing</div>
+  <div class="section-title">Simple, one-time pricing.<br>No subscriptions required.</div>
+  <div class="pricing-grid">
+    <div class="price-card">
+      <div class="price-name">Starter</div>
+      <div class="price-amount">$79</div>
+      <div class="price-per">one-time · single migration</div>
+      <ul class="price-features">
+        <li><span class="feat-check">✓</span>Full client record migration</li>
+        <li><span class="feat-check">✓</span>All appointment history</li>
+        <li><span class="feat-check">✓</span>Client notes & formulas</li>
+        <li><span class="feat-check">✓</span>Pre-migration preview</li>
+        <li><span class="feat-check">✓</span>Post-migration audit log</li>
+        <li><span class="feat-check">✓</span>48-hour rollback</li>
+      </ul>
+      <button class="btn-outline" onclick="alert('Early access signup coming soon!')">Get started</button>
+    </div>
+
+    <div class="price-card featured">
+      <div class="price-name">Professional <span class="popular-tag">Most popular</span></div>
+      <div class="price-amount" style="color:white">$179</div>
+      <div class="price-per">one-time + 30-day sync</div>
+      <ul class="price-features">
+        <li><span class="feat-check">✓</span>Everything in Starter</li>
+        <li><span class="feat-check">✓</span>Service menu migration</li>
+        <li><span class="feat-check">✓</span>Staff profiles & schedules</li>
+        <li><span class="feat-check">✓</span>Memberships & packages</li>
+        <li><span class="feat-check">✓</span>30-day cross-platform sync</li>
+        <li><span class="feat-check">✓</span>Priority email support</li>
+      </ul>
+      <button class="btn-white" onclick="alert('Early access signup coming soon!')">Get started</button>
+    </div>
+
+    <div class="price-card">
+      <div class="price-name">Studio</div>
+      <div class="price-amount">$299</div>
+      <div class="price-per">one-time · up to 3 locations</div>
+      <ul class="price-features">
+        <li><span class="feat-check">✓</span>Everything in Professional</li>
+        <li><span class="feat-check">✓</span>Up to 3 locations</li>
+        <li><span class="feat-check">✓</span>Multi-location audit log</li>
+        <li><span class="feat-check">✓</span>Gift certificate balances</li>
+        <li><span class="feat-check">✓</span>Product inventory migration</li>
+        <li><span class="feat-check">✓</span>Dedicated onboarding call</li>
+      </ul>
+      <button class="btn-outline" onclick="alert('Early access signup coming soon!')">Get started</button>
+    </div>
+  </div>
+  <p style="margin-top:2rem; font-size:0.83rem; color:var(--muted);">Freelancers charge $200–500 for the same job with no guarantee. Every plan includes a full audit log and 48-hour rollback.</p>
+</section>
+
+<!-- FINAL CTA -->
+<section class="final-cta">
+  <h2>Ready to stop dreading<br>the switch?</h2>
+  <p>Join 200+ salon owners on the early access list.<br>We'll notify you when your platform pair is ready.</p>
+  <div class="final-form">
+    <input class="final-input" id="final-email" type="email" placeholder="your@email.com" />
+    <button class="btn-white-cta" onclick="handleSignup('final')">Join the waitlist →</button>
+  </div>
+  <div class="success-msg" id="final-success" style="justify-content:center; margin-top:1rem; background:rgba(255,255,255,0.15); color:white;">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:16px;height:16px"><polyline points="20 6 9 17 4 12"/></svg>
+    You're in! We'll be in touch soon.
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">SwitchKit</div>
+  <div class="footer-links">
+    <a href="#">Privacy</a>
+    <a href="#">Terms</a>
+    <a href="#">Contact</a>
+  </div>
+  <div class="footer-copy">© 2026 SwitchKit. All rights reserved.</div>
+</footer>
+
+<script>
+function handleSignup(section) {
+  const input = document.getElementById(section + '-email');
+  const success = document.getElementById(section + '-success');
+  if (!input.value || !input.value.includes('@')) {
+    input.style.borderColor = '#E8453C';
+    setTimeout(() => { input.style.borderColor = ''; }, 1500);
+    return;
+  }
+  input.style.display = 'none';
+  if (section === 'hero') {
+    document.querySelector('.btn-primary').style.display = 'none';
+  }
+  success.classList.add('show');
+}
+
+// Animate progress bar counter
+const progPct = document.getElementById('prog-pct');
+let pct = 42;
+let dir = 1;
+setInterval(() => {
+  pct += dir * 0.4;
+  if (pct >= 91) dir = -1;
+  if (pct <= 42) dir = 1;
+  progPct.textContent = Math.round(pct) + '%';
+}, 80);
+
+// Stagger fade-in on scroll
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.style.opacity = '1'; e.target.style.transform = 'translateY(0)'; } });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.step, .testi-card, .price-card, .pain-item').forEach(el => {
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(20px)';
+  el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+  observer.observe(el);
+});
+</script>
+</body>
+</html>
